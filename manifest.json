@@ -1,0 +1,9 @@
+{
+  "name": "Bankroll Discipline Tracker",
+  "short_name": "Bankroll",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eef1f5",
+  "theme_color": "#111827",
+  "icons": []
+}
