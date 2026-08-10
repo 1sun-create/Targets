@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<title>Bankroll Discipline Tracker</title>
+<style>
+:root{--bg:#eef2f7;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--green:#16a34a;--red:#dc2626;--blue:#2563eb;--shadow:0 8px 25px #0f172a18}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:12px}.app{max-width:980px;margin:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+h1,h2,h3,p{margin:0}.top{display:flex;align-items:center;justify-content:space-between;gap:10px}.title{font-size:24px;font-weight:900}.sub{text-align:left;color:var(--muted);font-size:12px;margin-top:3px}
+.tabs{display:flex;gap:6px;overflow:auto;margin:14px 0 12px}.tab{white-space:nowrap;border:0;border-radius:999px;padding:10px 13px;background:#e2e8f0;font-weight:800;color:#334155}.tab.active{background:#0f172a;color:#fff}
+.view{display:none}.view.active{display:block}.section{font-size:17px;font-weight:900;margin:12px 0 9px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field label{display:block;font-size:12px;font-weight:800}.field input,.field select,.field textarea{width:100%;padding:11px;margin-top:5px;border:1px solid #cbd5e1;border-radius:11px;font-size:15px;background:#fff;color:var(--text)}textarea{min-height:70px;resize:vertical}
+.plan{padding:14px;border-radius:16px;background:#eef2ff;text-align:center;margin-top:12px}.plan strong{font-size:18px}.plan p{font-size:12px;color:#475569;margin-top:4px}
+.targets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.box{padding:14px;border-radius:16px}.winbox{background:#ecfdf5;border:1px solid #bbf7d0}.lossbox{background:#fff1f2;border:1px solid #fecdd3}.box small{font-weight:900}.box b{display:block;font-size:23px;margin:5px 0}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.metric{background:#f8fafc;border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}.metric small{display:block;color:var(--muted);font-size:10px}.metric b{display:block;font-size:17px;margin-top:4px}.positive{color:var(--green)!important}.negative{color:var(--red)!important}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:900;cursor:pointer;flex:1;min-width:130px}.blue{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.red{background:var(--red);color:#fff}.dark{background:#0f172a;color:#fff}.gray{background:#e2e8f0;color:#0f172a}.danger{background:#fee2e2;color:#991b1b}
+.progress{height:11px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:7px}.progress div{height:100%;background:var(--blue);width:0}.small{font-size:11px;color:var(--muted)}
+.notice{padding:12px;border-radius:13px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:11px;margin-top:10px}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:850px}th,td{padding:8px;border-bottom:1px solid var(--line);font-size:12px;text-align:right}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:center}th{color:#475569}.badge{display:inline-block;border-radius:999px;padding:4px 8px;font-weight:900}.bw{background:#dcfce7;color:#166534}.bl{background:#fee2e2;color:#991b1b}.bb{background:#dbeafe;color:#1d4ed8}
+.planitem{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}.row{display:flex;justify-content:space-between;gap:10px}.empty{text-align:center;padding:25px;color:var(--muted)}
+.modal{display:none;position:fixed;inset:0;background:#0f172a99;z-index:10;padding:20px;overflow:auto}.modal.show{display:block}.modalbox{max-width:550px;margin:35px auto;background:#fff;border-radius:18px;padding:16px}.close{float:right;border:0;border-radius:8px;padding:7px}
+@media(max-width:650px){.grid,.targets,.metrics{grid-template-columns:1fr}.actions{flex-direction:column}.btn{width:100%}.title{font-size:21px}}
+</style>
+</head>
+<body>
+<main class="app">
+<div class="card">
+<div class="top"><div><div class="title">🎯 Bankroll Discipline</div><div class="sub">Plan • Record • Review • Stay disciplined</div></div><button class="btn gray" id="settings" style="flex:0 0 auto;min-width:50px">⚙️</button></div>
+
+<div class="tabs">
+<button class="tab active" data-tab="home">Dashboard</button>
+<button class="tab" data-tab="history">Daily History</button>
+<button class="tab" data-tab="plans">Plans / Archive</button>
+<button class="tab" data-tab="backup">Backup</button>
+</div>
+
+<section class="view active" id="home">
+<div class="section">Current plan</div>
+<div class="grid">
+<div class="field"><label>Starting Bankroll (₹)</label><input id="start" type="number" min="0" step=".01"></div>
+<div class="field"><label>Win Target (%)</label><input id="wp" type="number" min="0" step=".01"></div>
+<div class="field"><label>Stop-Loss (%)</label><input id="lp" type="number" min="0" max="100" step=".01"></div>
+<div class="field"><label>Planned Days</label><input id="days" type="number" min="1"></div>
+</div>
+
+<div class="plan"><strong id="day">DAY 1 — PLAN</strong><p>पहले plan देखें। Session के बाद actual result record करें।</p></div>
+
+<div class="targets">
+<div class="box winbox"><small>🎯 TODAY'S WIN TARGET</small><b id="target">₹0.00</b><span id="gain">+₹0.00</span></div>
+<div class="box lossbox"><small>🛑 TODAY'S STOP-LOSS</small><b id="stop">₹0.00</b><span id="risk">−₹0.00</span></div>
+</div>
+
+<div class="metrics">
+<div class="metric"><small>Current bankroll</small><b id="balance">₹0</b></div>
+<div class="metric"><small>Total P/L</small><b id="pl">₹0</b></div>
+<div class="metric"><small>ROI</small><b id="roi">0%</b></div>
+<div class="metric"><small>Win rate</small><b id="rate">—</b></div>
+</div>
+<div class="metrics">
+<div class="metric"><small>Wins</small><b id="wins">0</b></div>
+<div class="metric"><small>Losses</small><b id="losses">0</b></div>
+<div class="metric"><small>Current streak</small><b id="streak">—</b></div>
+<div class="metric"><small>Best streak</small><b id="best">—</b></div>
+</div>
+
+<div class="section">🎯 Target progress</div>
+<div class="small" id="progressText">0 / 0 days</div><div class="progress"><div id="progress"></div></div>
+
+<div class="actions">
+<button class="btn green" id="win">✓ Record WIN</button>
+<button class="btn red" id="loss">✕ Record LOSS</button>
+<button class="btn blue" id="custom">＋ Actual P/L</button>
+</div>
+<div class="actions">
+<button class="btn gray" id="finish">✓ Finish / Archive plan</button>
+<button class="btn dark" id="new">＋ Start new plan</button>
+</div>
+<div class="notice">यह tracker result predict नहीं करता और profit guarantee नहीं देता। Planned target/stop सिर्फ discipline levels हैं। अगर actual result अलग है तो “Actual P/L” इस्तेमाल करें।</div>
+</section>
+
+<section class="view" id="history">
+<div class="section">📅 Daily History</div><div class="small" id="summary"></div>
+<div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Day</th><th>Result</th><th>Date</th><th>Start</th><th>Actual P/L</th><th>End</th><th>Target</th><th>Stop</th><th>Note</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="actions"><button class="btn gray" id="clear">Clear current plan history</button></div>
+</section>
+
+<section class="view" id="plans">
+<div class="section">🗂 Plans & Archive</div><div class="small">पुराने completed plans यहीं सुरक्षित रहेंगे। नया plan शुरू करने पर पुराने records delete नहीं होंगे।</div>
+<div id="planList" style="margin-top:10px"></div>
+</section>
+
+<section class="view" id="backup">
+<div class="section">💾 Backup & Restore</div>
+<div class="small">Records browser/device में save होते हैं। Phone बदलने या browser data clear करने से पहले backup export करें।</div>
+<div class="actions">
+<button class="btn dark" id="export">⬇ Full backup</button>
+<button class="btn blue" id="import">⬆ Restore backup</button>
+<button class="btn gray" id="csv">⬇ CSV history</button>
+</div>
+<input id="file" type="file" accept=".json,application/json" hidden>
+<div class="notice">GitHub आपके code को save करता है; आपकी personal history GitHub में automatically save नहीं होती। Backup file से आप history दूसरे phone पर भी ले जा सकते हैं।</div>
+<div class="actions"><button class="btn danger" id="reset">⚠ Delete all local data</button></div>
+</section>
+</div>
+<div class="small" style="text-align:center;padding:5px">Personal tracker • Local data + manual backup</div>
+</main>
+
+<div class="modal" id="modal"><div class="modalbox"><button class="close" id="close">✕</button><div class="section" id="modalTitle">Record</div><div id="modalBody"></div><div class="actions"><button class="btn gray" id="cancel">Cancel</button><button class="btn blue" id="save">Save</button></div></div></div>
+
+<script>
+const KEY="bankrollDisciplineV3";
+const $=id=>document.getElementById(id);
+const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const date=()=>new Date().toISOString().slice(0,10);
+const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+function makePlan(start=10000,wp=5,lp=15,days=30,name="Plan 1"){
+ return {id:id(),name,created:date(),finished:null,start:+start||0,balance:+start||0,wp:+wp||0,lp:+lp||0,days:+days||30,history:[]};
+}
+function initial(){const p=makePlan();return {version:3,active:p.id,plans:[p]}}
+let data=(()=>{try{let x=JSON.parse(localStorage.getItem(KEY));if(x&&x.plans?.length)return x}catch(e){}let x=initial();localStorage.setItem(KEY,JSON.stringify(x));return x})();
+const active=()=>data.plans.find(p=>p.id===data.active)||data.plans[0];
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+
+function stats(p){
+ let w=p.history.filter(x=>x.result==="WIN").length,l=p.history.filter(x=>x.result==="LOSS").length;
+ let cur=0,best=0,last="";
+ p.history.forEach(x=>{if(x.result===last)cur++;else{last=x.result;cur=1}best=Math.max(best,cur)});
+ let pl=p.balance-p.start,roi=p.start?pl/p.start*100:0;
+ return {w,l,rate:p.history.length?w/p.history.length*100:0,pl,roi,streak:p.history.length?last+" "+cur:"—",best};
+}
+function refresh(){
+ const p=active(),s=stats(p),t=p.balance*(1+p.wp/100),st=p.balance*(1-p.lp/100),done=p.history.length;
+ $("start").value=p.start;$("wp").value=p.wp;$("lp").value=p.lp;$("days").value=p.days;
+ $("day").textContent=`DAY ${done+1} — PLAN`;$("target").textContent=money(t);$("gain").textContent="+"+money(t-p.balance);
+ $("stop").textContent=money(st);$("risk").textContent="−"+money(p.balance-st);$("balance").textContent=money(p.balance);
+ $("pl").textContent=(s.pl>=0?"+":"")+money(s.pl);$("pl").className="metric "+(s.pl>=0?"positive":"negative");
+ $("roi").textContent=(s.roi>=0?"+":"")+s.roi.toFixed(2)+"%";$("roi").className="metric "+(s.roi>=0?"positive":"negative");
+ $("rate").textContent=p.history.length?s.rate.toFixed(1)+"%":"—";$("wins").textContent=s.w;$("losses").textContent=s.l;$("streak").textContent=s.streak;$("best").textContent=p.history.length?s.best:"—";
+ const pct=Math.min(100,done/p.days*100);$("progressText").textContent=`${done} / ${p.days} days completed (${pct.toFixed(0)}%)`;$("progress").style.width=pct+"%";
+ renderHistory(p);renderPlans();$("summary").textContent=`${p.name} • ${p.history.length} sessions • ${s.w}W / ${s.l}L • P/L ${money(s.pl)}`;
+}
+function renderHistory(p){
+ if(!p.history.length){$("rows").innerHTML='<tr><td colspan="9" class="empty">No sessions recorded yet.</td></tr>';return}
+ $("rows").innerHTML=p.history.map(r=>`<tr><td>${r.day}</td><td><span class="badge ${r.result==="WIN"?"bw":r.result==="LOSS"?"bl":"bb"}">${r.result}</span></td><td>${r.date}</td><td>${money(r.start)}</td><td class="${r.actual>=0?"positive":"negative"}">${r.actual>=0?"+":""}${money(r.actual)}</td><td><b>${money(r.end)}</b></td><td>${money(r.target)}</td><td>${money(r.stop)}</td><td>${esc(r.note)}</td></tr>`).join("");
+}
+function renderPlans(){
+ $("planList").innerHTML=data.plans.slice().reverse().map(p=>{let s=stats(p);return `<div class="planitem"><div class="row"><b>${esc(p.name)}</b><span class="badge ${p.id===data.active?"bb":"bw"}">${p.id===data.active?"ACTIVE":"ARCHIVED"}</span></div><div class="small" style="margin-top:5px">Started ${p.created}${p.finished?" • Finished "+p.finished:""} • ${p.history.length} sessions</div><div style="margin-top:6px"><b class="${s.pl>=0?"positive":"negative"}">${s.pl>=0?"+":""}${money(s.pl)}</b> • Win rate ${p.history.length?s.rate.toFixed(1)+"%":"—"} • ${s.w}W / ${s.l}L</div>${p.id!==data.active?`<button class="btn blue" style="margin-top:8px" onclick="openPlan('${p.id}')">Open plan</button>`:""}</div>`}).join("");
+}
+window.openPlan=x=>{data.active=x;save();refresh();tab("home")};
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+function tab(name){document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===name))}
+
+["start","wp","lp","days"].forEach(k=>$(k).onchange=()=>{
+ let p=active(),v=Number($(k).value)||0;
+ if(k==="start"){if(p.history.length)return alert("पहली entry के बाद starting bankroll नहीं बदलें। जरूरत हो तो नया plan शुरू करें।");p.start=v;p.balance=v}
+ if(k==="wp")p.wp=Math.max(0,v);if(k==="lp")p.lp=Math.min(100,Math.max(0,v));if(k==="days")p.days=Math.max(1,Math.round(v));
+ save();refresh();
+});
+
+let action=null;
+function openRecord(type){
+ action=type;let p=active(),t=p.balance*(1+p.wp/100),st=p.balance*(1-p.lp/100);
+ $("modalTitle").textContent=type==="CUSTOM"?"Record actual result":"Confirm planned "+type;
+ $("modalBody").innerHTML=type==="CUSTOM"
+ ?`<div class="grid"><div class="field"><label>Actual P/L (₹)</label><input id="mPL" type="number" step=".01" placeholder="250 or -100"></div><div class="field"><label>Result</label><select id="mResult"><option>WIN</option><option>LOSS</option><option>BREAK-EVEN</option></select></div></div><div class="field" style="margin-top:10px"><label>Note</label><textarea id="mNote" placeholder="Did you follow your rules?"></textarea></div>`
+ :`<p>Start: <b>${money(p.balance)}</b></p><p style="margin-top:6px">${type==="WIN"?"Target":"Stop-loss"}: <b>${money(type==="WIN"?t:st)}</b></p><div class="field" style="margin-top:10px"><label>Note</label><textarea id="mNote" placeholder="Optional note"></textarea></div>`;
+ $("modal").classList.add("show");
+}
+$("win").onclick=()=>openRecord("WIN");$("loss").onclick=()=>openRecord("LOSS");$("custom").onclick=()=>openRecord("CUSTOM");
+function close(){ $("modal").classList.remove("show");action=null }
+$("close").onclick=close;$("cancel").onclick=close;
+$("save").onclick=()=>{
+ let p=active(),start=p.balance,t=p.balance*(1+p.wp/100),st=p.balance*(1-p.lp/100),actual,result;
+ if(action==="CUSTOM"){actual=Number($("mPL").value);if(!Number.isFinite(actual))return alert("Actual P/L डालें।");result=$("mResult").value}
+ else{actual=action==="WIN"?t-start:st-start;result=action}
+ p.history.push({day:p.history.length+1,date:date(),result,start,target:t,stop:st,actual,end:start+actual,note:$("mNote")?.value||""});
+ p.balance=start+actual;save();close();refresh();
+};
+
+$("finish").onclick=()=>{
+ let p=active();if(!confirm("Current plan archive करें? Records सुरक्षित रहेंगे."))return;
+ p.finished=date();let n=makePlan(p.balance,p.wp,p.lp,p.days,"Plan "+(data.plans.length+1));data.plans.push(n);data.active=n.id;save();refresh();
+};
+$("new").onclick=()=>{
+ let p=active(),v=prompt("New plan starting bankroll (₹):",p.balance);if(v===null)return;
+ let n=makePlan(+v||0,p.wp,p.lp,p.days,prompt("Plan name:",`Plan ${data.plans.length+1}`)||`Plan ${data.plans.length+1}`);data.plans.push(n);data.active=n.id;save();refresh();
+};
+$("clear").onclick=()=>{if(confirm("Current plan की पूरी history delete करें?")){let p=active();p.history=[];p.balance=p.start;save();refresh()}};
+
+function dl(blob,name){let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$("export").onclick=()=>dl(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),"bankroll-tracker-backup.json");
+$("csv").onclick=()=>{
+ let r=[["Plan","Day","Date","Result","Start","Actual P/L","End","Target","Stop","Note"]];
+ data.plans.forEach(p=>p.history.forEach(x=>r.push([p.name,x.day,x.date,x.result,x.start,x.actual,x.end,x.target,x.stop,x.note])));
+ dl(new Blob([r.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n")],{type:"text/csv"}),"bankroll-history.csv");
+};
+$("import").onclick=()=>$("file").click();
+$("file").onchange=e=>{let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let x=JSON.parse(rd.result);if(!x.plans?.length)throw 0;data=x;save();refresh();alert("Backup successfully restored.")}catch(e){alert("Invalid backup file.")}};rd.readAsText(f)};
+$("reset").onclick=()=>{if(confirm("ALL plans और records इस device से delete करें?")){data=initial();save();refresh()}};
+
+$("settings").onclick=()=>{
+ action="SETTINGS";$("modalTitle").textContent="Plan settings";$("modalBody").innerHTML=`<div class="field"><label>Current plan name</label><input id="mName" value="${esc(active().name)}"></div><p class="small" style="margin-top:10px">Backup regularly before changing phones.</p>`;$("modal").classList.add("show");
+};
+const originalSave=$("save").onclick;
+$("save").onclick=()=>{if(action==="SETTINGS"){active().name=$("mName").value.trim()||active().name;save();close();refresh()}else originalSave()};
+
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+refresh();
+</script>
+</body></html>
