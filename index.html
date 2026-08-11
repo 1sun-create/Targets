@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Target Discipline</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <div class="brand">TARGET <span>DISCIPLINE</span></div>
+      <div class="sub">Plan the target. Respect the stop loss. Walk away.</div>
+    </div>
+    <button id="themeBtn" class="icon">☼</button>
+  </header>
+
+  <main>
+    <section class="hero card">
+      <div class="eyebrow">TODAY'S PLAN</div>
+      <div class="money" id="bankroll">₹0</div>
+      <div class="muted">Current bankroll</div>
+      <div class="bar"><i id="progress"></i></div>
+      <div class="grid3">
+        <div><b id="target">₹0</b><small>Win Target</small></div>
+        <div><b id="stop">₹0</b><small>Stop Loss</small></div>
+        <div><b id="pnl">₹0</b><small>Today's P&amp;L</small></div>
+      </div>
+    </section>
+
+    <section class="card setup">
+      <div class="sectionTitle">SETUP</div>
+      <label>Starting Bankroll <input id="start" type="number" inputmode="decimal" placeholder="10000"></label>
+      <div class="twocol">
+        <label>Win Target % <input id="targetPct" type="number" inputmode="decimal" value="5"></label>
+        <label>Stop Loss % <input id="stopPct" type="number" inputmode="decimal" value="5"></label>
+      </div>
+      <button id="save" class="primary">SAVE TODAY'S PLAN</button>
+    </section>
+
+    <section class="actions">
+      <button id="win" class="win">WIN <span>+</span></button>
+      <button id="loss" class="loss">LOSS <span>−</span></button>
+      <button id="reset" class="ghost">RESET DAY</button>
+    </section>
+
+    <section class="card quote">
+      <div class="sectionTitle">TODAY'S DISCIPLINE</div>
+      <p id="quote"></p>
+    </section>
+
+    <section class="card history">
+      <div class="row"><div class="sectionTitle">HISTORY</div><button id="clear" class="textBtn">Clear</button></div>
+      <div id="history"></div>
+    </section>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
