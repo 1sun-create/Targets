@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <title>MONEYPhilo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">MONEY<span>Philo</span></div><div class="tag">Bankroll • Discipline • Tracking</div></div>
+    <button class="icon-btn" id="soundToggle" aria-label="Toggle sound">🔊</button>
+  </header>
+
+  <main id="main">
+    <section class="view active" id="homeView">
+      <div class="account-row">
+        <select id="accountSelect" aria-label="Select account"></select>
+        <button class="secondary-btn" id="addAccount">＋ Account</button>
+      </div>
+
+      <section class="bankroll-card">
+        <div class="eyebrow">CURRENT BANKROLL</div>
+        <div class="bankroll" id="bankroll">₹1,000</div>
+        <div class="bankroll-meta"><span>START <b id="startBankroll">₹1,000</b></span><span>NET P&L <b id="netPnl">+₹0</b></span></div>
+      </section>
+
+      <section class="target-grid">
+        <article class="target-card win">
+          <div class="eyebrow">WIN TARGET</div>
+          <div class="percent" id="targetPct">5%</div>
+          <div class="target-value" id="winTarget">₹1,050</div>
+          <div class="arrow-line"><span id="winFrom">₹1,000</span> → <b id="winAmount">+₹50</b></div>
+          <button class="action-btn win-btn" id="winBtn">WIN TARGET</button>
+        </article>
+        <article class="target-card loss">
+          <div class="eyebrow">STOP LOSS</div>
+          <div class="percent" id="stopPct">15.5%</div>
+          <div class="target-value" id="stopTarget">₹845</div>
+          <div class="arrow-line"><span id="lossFrom">₹1,000</span> → <b id="lossAmount">−₹155</b></div>
+          <button class="action-btn loss-btn" id="lossBtn">STOP LOSS</button>
+        </article>
+      </section>
+
+      <button class="undo-btn" id="undoBtn">↶ UNDO LAST ACTION</button>
+
+      <section class="stats-card">
+        <div><b class="green-text" id="wins">0</b><small>WINS</small></div>
+        <div><b class="red-text" id="losses">0</b><small>LOSSES</small></div>
+        <div><b class="blue-text" id="winRate">0%</b><small>WIN RATE</small></div>
+        <div><b id="statPnl">₹0</b><small>P&L</small></div>
+      </section>
+
+      <section class="quote-card">
+        <span class="quote-mark">“</span>
+        <p id="quote">Discipline is choosing between what you want now and what you want most.</p>
+        <button class="mini-btn" id="newQuote" aria-label="New quote">↻</button>
+      </section>
+
+      <section class="summary-card">
+        <div class="section-title"><span>▣ TODAY'S SUMMARY</span><span id="todayDate"></span></div>
+        <div class="summary-grid"><div><small>STATUS</small><b id="todayStatus">No Trade</b></div><div><small>P&L</small><b id="todayPnl">₹0</b></div><div><small>TRADES</small><b id="todayTrades">0</b></div><div><small>DURATION</small><b id="todayDuration">00:00</b></div></div>
+      </section>
+
+      <section class="history-preview">
+        <div class="section-title"><span>▣ RECENT HISTORY</span><button class="link-btn" data-view="history">View All</button></div>
+        <div id="recentHistory"></div>
+      </section>
+
+      <section class="compound-card">
+        <div class="section-title"><span>▣ COMPOUNDING CALCULATOR</span></div>
+        <div class="compound-inputs">
+          <label>Starting Bankroll<input id="compoundStart" type="number" inputmode="decimal" value="1000"></label>
+          <label>Target %<input id="compoundPct" type="number" inputmode="decimal" value="5" step="0.1"></label>
+          <label>Stop Loss %<input id="compoundStop" type="number" inputmode="decimal" value="15.5" step="0.1"></label>
+          <label>Compounding Days<input id="compoundDays" type="number" inputmode="numeric" value="10" min="1" max="365"></label>
+        </div>
+        <button class="calculate-btn" id="calculateCompound">CALCULATE PLAN</button>
+        <div class="compound-result"><div><small>FINAL TARGET</small><b id="finalTarget">₹1,628.89</b></div><div><small>TOTAL PROFIT</small><b id="compoundProfit">+₹628.89</b></div><div><small>STEPS</small><b id="compoundSteps">10</b></div></div>
+        <div class="progress-row"><b id="progressText">0 / 10 DAYS COMPLETED</b><b id="progressPct">0%</b></div>
+        <div class="progress"><span id="progressBar"></span></div>
+        <div class="plan-list" id="planList"></div>
+      </section>
+    </section>
+
+    <section class="view" id="calendarView"><div class="page-head"><button class="circle-btn" id="prevMonth">‹</button><h2 id="monthTitle"></h2><button class="circle-btn" id="nextMonth">›</button></div><div class="calendar-card"><div class="weekdays">SUN MON TUE WED THU FRI SAT</div><div class="calendar" id="calendar"></div></div><div class="day-detail" id="dayDetail"></div></section>
+
+    <section class="view" id="accountsView"><div class="page-head"><h2>Accounts</h2><button class="secondary-btn" id="addAccount2">＋ Account</button></div><div id="accountList"></div><div class="combined-card" id="combinedCard"></div></section>
+
+    <section class="view" id="historyView"><div class="page-head"><h2>History</h2><button class="secondary-btn" id="exportBtn">Export</button></div><div class="filter-row"><select id="historyAccountFilter"><option value="all">All Accounts</option></select></div><div id="historyList"></div></section>
+
+    <section class="view" id="reportsView"><div class="page-head"><h2>Reports</h2><select id="reportYear"></select></div><div id="reportContent"></div></section>
+
+    <section class="view" id="timerView"><div class="timer-card"><div class="eyebrow">SESSION TIMER</div><div class="timer-display" id="timerDisplay">30:00</div><div class="timer-input"><input id="timerMinutes" type="number" min="1" max="180" value="30"><span>minutes</span></div><div class="timer-controls"><button class="calculate-btn" id="timerStart">START</button><button class="secondary-btn" id="timerPause">PAUSE</button><button class="secondary-btn" id="timerReset">RESET</button></div><div class="time-up" id="timeUp">TIME UP</div></div></section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="home">⌂<span>Home</span></button>
+    <button class="nav-btn" data-view="calendar">▦<span>Calendar</span></button>
+    <button class="nav-btn" data-view="accounts">▢<span>Accounts</span></button>
+    <button class="nav-btn" data-view="history">☷<span>History</span></button>
+    <button class="nav-btn" data-view="reports">▥<span>Reports</span></button>
+    <button class="nav-btn" data-view="timer">◷<span>Timer</span></button>
+  </nav>
+</div>
+<div class="modal" id="modal"><div class="modal-box"><button class="modal-close" id="modalClose">×</button><h3 id="modalTitle"></h3><div id="modalBody"></div></div></div>
+<script src="script.js"></script>
+</body>
+</html>
