@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#fff"><title>Moneyphilo</title><link rel="stylesheet" href="style.css"></head>
+<body><div class="app">
+<header><div><div class="brand">Moneyphilo</div><div class="tag">Bankroll • Discipline • Tracking</div></div><button id="sound" class="round">🔊</button></header>
+<div class="accountbar"><select id="account"></select><button id="addAccount">+ Account</button></div>
+<main>
+<section class="page active" id="home">
+<div class="main-card"><div class="eyebrow">CURRENT BANKROLL</div><div class="bankroll" id="bankroll">₹1,000.00</div><div class="mini"><span>START <b id="start">₹1,000</b></span><span>NET P&L <b id="pnl">₹0</b></span></div></div>
+<div class="core"><div class="target green"><div class="eyebrow">WIN TARGET</div><div class="rate" id="winRate">5%</div><div class="arrow"><b id="fromWin">₹1,000</b><span>→</span><strong id="toWin">₹1,050</strong></div><div class="amount plus" id="winAmount">+₹50</div><button id="win">WIN TARGET</button></div>
+<div class="target red"><div class="eyebrow">STOP LOSS</div><div class="rate" id="lossRate">15.5%</div><div class="arrow"><b id="fromLoss">₹1,000</b><span>→</span><strong id="toLoss">₹845</strong></div><div class="amount minus" id="lossAmount">−₹155</div><button id="loss">STOP LOSS</button></div></div>
+<div class="plan card"><div class="section"><div><h2>Compounding Plan</h2><small>Choose how many days you want to compound</small></div></div>
+<div class="planinputs"><label>Compound Days<input id="compoundDays" type="number" min="1" max="365" value="10"></label><button id="makePlan">CALCULATE PLAN</button></div>
+<div id="planSummary" class="plansummary"></div>
+<div class="progresswrap"><div class="progresslabel"><b id="progressText">0 / 10 days</b><span id="progressPct">0%</span></div><div class="progress"><i id="progressBar"></i></div></div>
+<div class="chartbox"><canvas id="growthChart"></canvas></div></div>
+<div class="compound card"><div class="section"><div><h2>Compounding Calculator</h2><small>Completed days stay recorded below</small></div><b id="steps">0 steps</b></div><div class="thead"><span>STEP</span><span>BANKROLL</span><span>+ TARGET</span><span>− STOP</span></div><div id="rows"></div></div>
+<div class="records card"><div class="section"><h2>Today's Activity</h2><button id="undo" class="undo">UNDO LAST</button></div><div id="todayRecords"></div></div>
+<div class="stats"><div><span>Wins</span><b id="wins">0</b></div><div><span>Losses</span><b id="losses">0</b></div><div><span>Drawdown</span><b id="dd">0%</b></div><div><span>Compound</span><b id="compound">0</b></div></div>
+<div class="quote card"><div class="eyebrow">TODAY'S DISCIPLINE</div><p id="quote"></p></div>
+<div class="settings card"><div class="section"><div><h2>Risk Settings</h2><small>Change anytime</small></div></div><div class="fields"><label>Starting bankroll<input id="startInput" type="number" inputmode="decimal"></label><label>Win target %<input id="winInput" type="number" step=".1"></label><label>Stop loss %<input id="lossInput" type="number" step=".1"></label></div></div>
+</section>
+<section class="page" id="calendarPage"><div class="pagehead"><h1>Track Record</h1></div><div class="calnav"><button id="prev">‹</button><b id="month"></b><button id="next">›</button></div><div class="week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div id="cal" class="cal"></div><div class="legend"><span>🟢 Target</span><span>🔴 Stop Loss</span><span>⬜ No Trade</span></div><div id="detail" class="detail card">Tap a date.</div></section>
+<section class="page" id="accountsPage"><div class="pagehead"><h1>Accounts</h1><button id="addAccount2">+ Account</button></div><div id="accounts"></div><div class="combined card"><div class="eyebrow">COMBINED P&L</div><b id="combined">₹0</b></div></section>
+<section class="page" id="historyPage"><div class="pagehead"><h1>History</h1><button id="export">Backup</button></div><div class="filters"><select id="histAcc"></select><select id="histType"><option>ALL</option><option>WIN</option><option>LOSS</option></select></div><div id="history"></div></section>
+<section class="page" id="reportsPage"><div class="pagehead"><h1>Reports</h1><select id="repAcc"></select></div><div class="reports"><div class="report card"><span>MONTH P&L</span><b id="mp">₹0</b></div><div class="report card"><span>YEAR P&L</span><b id="yp">₹0</b></div><div class="report card"><span>TARGET DAYS</span><b id="td">0</b></div><div class="report card"><span>STOP DAYS</span><b id="sd">0</b></div><div class="report card"><span>TRADING DAYS</span><b id="trd">0</b></div><div class="report card"><span>WIN RATE</span><b id="wr">0%</b></div></div><div class="months card"><h2>Yearly Monthly P&L</h2><div id="months"></div></div></section>
+<section class="page" id="timerPage"><div class="pagehead"><h1>Session Timer</h1></div><div class="timer card"><div id="clock">30:00</div><div id="timerStatus">Ready</div><div class="duration"><input id="mins" type="number" min="1" value="30"> minutes</div><div class="timerbuttons"><button class="dark" id="startTimer">START</button><button id="pauseTimer">PAUSE</button><button id="resetTimer">RESET</button></div></div></section>
+</main>
+<nav><button class="active" data-page="home">⌂<small>Home</small></button><button data-page="calendarPage">▦<small>Calendar</small></button><button data-page="accountsPage">◎<small>Accounts</small></button><button data-page="historyPage">≡<small>History</small></button><button data-page="reportsPage">◔<small>Reports</small></button><button data-page="timerPage">◷<small>Timer</small></button></nav>
+</div><script src="script.js"></script></body></html>
